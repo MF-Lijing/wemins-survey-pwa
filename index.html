@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>威敏斯客户调研</title>
+
+  <meta name="theme-color" content="#2F5597" />
+  <meta name="description" content="威敏斯仪器设备有限公司 · 中国稀土学会 2026 学术年会现场访客信息采集与意向分级" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="威敏斯调研" />
+  <meta name="format-detection" content="telephone=no" />
+
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <link rel="icon" href="icons/icon-192.png" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="topbar-text">
+        <h1 id="appName">威敏斯客户调研</h1>
+        <p id="appSubtitle"></p>
+      </div>
+      <button id="collectorBtn" class="collector-chip" type="button" aria-haspopup="dialog">
+        <span class="collector-chip-label">采集人</span>
+        <strong id="collectorName">—</strong>
+        <span class="collector-chip-caret" aria-hidden="true">⌄</span>
+      </button>
+    </header>
+
+    <main class="content" id="content">
+      <!-- 录入 -->
+      <section class="view" id="view-form">
+        <form id="surveyForm" novalidate autocomplete="off">
+          <div class="card">
+            <div class="field">
+              <label for="unitName">单位名称<span class="req">*</span></label>
+              <input id="unitName" name="unitName" type="text" enterkeyhint="next" />
+              <p class="field-hint" id="unitNameHint"></p>
+            </div>
+
+            <div class="field-row">
+              <div class="field">
+                <label for="visitorName">姓名<span class="req">*</span></label>
+                <input id="visitorName" name="visitorName" type="text" enterkeyhint="next" />
+              </div>
+              <div class="field">
+                <label for="phone">手机号<span class="req">*</span></label>
+                <input id="phone" name="phone" type="tel" inputmode="numeric" enterkeyhint="next" />
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="email">邮箱</label>
+              <input id="email" name="email" type="email" enterkeyhint="next" />
+              <p class="field-hint" id="phoneHint"></p>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="field">
+              <label>研究方向<span class="req">*</span></label>
+              <div class="chips" id="researchChips" role="radiogroup" aria-label="研究方向"></div>
+              <div class="custom-box" id="researchCustomBox" hidden>
+                <div class="input-with-mic">
+                  <input id="researchCustom" name="researchCustom" type="text" />
+                  <button class="mic" type="button" data-voice-target="researchCustom" aria-label="语音输入研究方向">🎙</button>
+                </div>
+                <p class="field-hint" id="researchVoiceHint"></p>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>工作方向<span class="req">*</span></label>
+              <div class="chips" id="workChips" role="radiogroup" aria-label="工作方向"></div>
+              <div class="custom-box" id="workCustomBox" hidden>
+                <div class="input-with-mic">
+                  <input id="workCustom" name="workCustom" type="text" />
+                  <button class="mic" type="button" data-voice-target="workCustom" aria-label="语音输入工作方向">🎙</button>
+                </div>
+                <p class="field-hint" id="workVoiceHint"></p>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="field">
+              <label for="expectation">对产品期待</label>
+              <textarea id="expectation" name="expectation" rows="4"></textarea>
+              <div class="textarea-foot">
+                <p class="field-hint" id="expectationHint"></p>
+                <button class="mic mic-wide" type="button" data-voice-target="expectation">🎙 语音录入</button>
+              </div>
+            </div>
+          </div>
+
+          <p class="form-error" id="formError" hidden></p>
+
+          <div class="actions">
+            <button class="btn btn-primary" type="submit" id="saveBtn">保存并评分</button>
+            <button class="btn btn-ghost" type="button" id="clearBtn">清空重填</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- 结果 -->
+      <section class="view" id="view-result" hidden></section>
+
+      <!-- 记录 -->
+      <section class="view" id="view-history" hidden></section>
+
+      <!-- 说明 -->
+      <section class="view" id="view-info" hidden></section>
+    </main>
+
+    <nav class="tabbar" id="tabbar">
+      <button class="tab is-active" type="button" data-view="form">
+        <span class="tab-icon" aria-hidden="true">✎</span><span>录入</span>
+      </button>
+      <button class="tab" type="button" data-view="history">
+        <span class="tab-icon" aria-hidden="true">☰</span><span>本机记录</span><span class="tab-badge" id="historyBadge" hidden>0</span>
+      </button>
+      <button class="tab" type="button" data-view="info">
+        <span class="tab-icon" aria-hidden="true">i</span><span>说明</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- 采集人切换 -->
+  <div class="sheet-backdrop" id="sheetBackdrop" hidden>
+    <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+      <div class="sheet-handle" aria-hidden="true"></div>
+      <h2 id="sheetTitle">切换采集人</h2>
+      <p class="sheet-hint" id="sheetHint"></p>
+      <div class="chips chips-wrap" id="collectorChips"></div>
+      <div class="custom-box" id="collectorCustomBox" hidden>
+        <input id="collectorCustom" type="text" placeholder="输入姓名" />
+      </div>
+      <div class="sheet-actions">
+        <button class="btn btn-ghost" type="button" id="sheetCancel">取消</button>
+        <button class="btn btn-primary" type="button" id="sheetConfirm">确定</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" hidden></div>
+
+  <script src="engine.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
