@@ -578,7 +578,9 @@
       "</div>";
 
     container.classList.add("is-active");
+    container.hidden = false;
     $("view-form").classList.remove("is-active");
+    $("view-form").hidden = true;
     $("view-history").classList.remove("is-active");
     $("view-info").classList.remove("is-active");
     $("content").scrollTop = 0;
@@ -796,7 +798,12 @@
     ["form", "result", "history", "info"].forEach(function (key) {
       var view = $("view-" + key);
       if (!view) return;
-      view.classList.toggle("is-active", key === name);
+      var active = key === name;
+      view.classList.toggle("is-active", active);
+      // styles.css 里 [hidden]{display:none!important} 用于保证弹层能关，
+      // 优先级高于 .view.is-active{display:block}；因此切换页面时必须同步清/加 hidden 属性，
+      // 否则结果页/记录页/说明页永远显示不出来（iOS Safari 尤其明显）。
+      view.hidden = !active;
     });
     Array.prototype.forEach.call(document.querySelectorAll(".tab"), function (tab) {
       tab.classList.toggle("is-active", tab.dataset.view === name);

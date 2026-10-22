@@ -4,7 +4,7 @@
  */
 "use strict";
 
-var CACHE = "wemins-survey-v1.1.0";
+var CACHE = "wemins-survey-v1.1.1";
 var ASSETS = [
   "./",
   "index.html",
