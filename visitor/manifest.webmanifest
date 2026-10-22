@@ -1,0 +1,9 @@
+{
+  "name": "威敏斯客户采集系统 · 访客登记",
+  "short_name": "威敏斯登记",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#F4F7F9",
+  "theme_color": "#1F4E5F",
+  "lang": "zh-CN"
+}

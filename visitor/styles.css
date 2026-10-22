@@ -1,0 +1,160 @@
+:root {
+  --brand: #1F4E5F;
+  --brand-2: #2F7A8F;
+  --ink: #17222A;
+  --ink-2: #4A5560;
+  --line: #DCE3E8;
+  --bg: #F4F7F9;
+  --card: #FFFFFF;
+  --ok: #1E7B4F;
+  --warn: #B4741C;
+  --err: #B4231C;
+  --radius: 14px;
+}
+
+/* hidden 属性优先级最高：任何 display 声明都不能把它“复活” */
+[hidden] { display: none !important; }
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-text-size-adjust: 100%;
+}
+
+.hero {
+  background: linear-gradient(160deg, var(--brand) 0%, var(--brand-2) 100%);
+  color: #fff;
+  padding: calc(22px + env(safe-area-inset-top)) 20px 26px;
+  border-radius: 0 0 22px 22px;
+}
+.hero-brand { font-size: 13px; letter-spacing: .14em; opacity: .82; }
+.hero h1 { margin: 6px 0 4px; font-size: 21px; font-weight: 650; letter-spacing: .01em; }
+.hero p { margin: 0; font-size: 13px; opacity: .86; }
+
+main { padding: 16px 16px calc(28px + env(safe-area-inset-bottom)); max-width: 620px; margin: 0 auto; }
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 18px 16px 20px;
+  box-shadow: 0 8px 24px rgba(31, 78, 95, .06);
+}
+.card.center { text-align: center; padding: 34px 20px; }
+
+.field { margin-bottom: 18px; }
+.field > label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 8px; color: var(--ink); }
+.req { color: var(--err); font-weight: 600; }
+
+input[type="text"], input[type="tel"], input[type="email"], textarea {
+  width: 100%;
+  padding: 12px 13px;
+  font-size: 16px; /* iOS 小于 16px 会自动放大页面 */
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  outline: none;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+input:focus, textarea:focus {
+  border-color: var(--brand-2);
+  box-shadow: 0 0 0 3px rgba(47, 122, 143, .12);
+}
+textarea { resize: vertical; min-height: 84px; }
+
+.hint { margin: 6px 0 0; font-size: 12px; color: var(--ink-2); min-height: 0; }
+.hint.ok { color: var(--ok); }
+.hint.warn { color: var(--err); }
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  appearance: none;
+  padding: 9px 15px;
+  font-size: 14px;
+  color: var(--ink-2);
+  background: #F7FAFB;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  transition: all .15s ease;
+}
+.chip:active { transform: scale(.97); }
+.chip.is-selected {
+  color: #fff;
+  background: var(--brand);
+  border-color: var(--brand);
+}
+.custom-box { margin-top: 10px; }
+
+.error {
+  margin: 0 0 14px;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: var(--err);
+  background: #FDF0EF;
+  border: 1px solid #F5C9C5;
+  border-radius: 10px;
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 14px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  background: var(--brand);
+  border: none;
+  border-radius: 12px;
+  transition: opacity .15s ease, transform .1s ease;
+}
+.btn-primary:active { transform: scale(.99); opacity: .92; }
+.btn-primary[disabled] { opacity: .55; }
+
+.btn-ghost {
+  margin-top: 14px;
+  padding: 11px 20px;
+  font-size: 14px;
+  color: var(--brand);
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.privacy { margin: 12px 0 0; font-size: 12px; color: var(--ink-2); text-align: center; }
+
+.tick {
+  width: 54px; height: 54px; margin: 0 auto 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px; color: #fff;
+  background: var(--ok); border-radius: 50%;
+}
+.tick.warn { background: var(--warn); }
+h2 { margin: 0 0 6px; font-size: 18px; }
+.muted { margin: 0; font-size: 14px; color: var(--ink-2); }
+
+.foot {
+  padding: 0 16px 22px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--ink-2);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink: #E4E7E9;
+    --ink-2: #9EB0BA;
+    --line: #2A3B45;
+    --bg: #0E161B;
+    --card: #15212A;
+  }
+  .chip { background: #1B2A33; }
+  .error { background: #2A1614; border-color: #5A2A24; }
+  .hero { background: linear-gradient(160deg, #17323C 0%, #1D4553 100%); }
+}

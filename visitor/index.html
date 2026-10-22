@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#1F4E5F" />
+<title>威敏斯客户采集系统 · 访客登记</title>
+<link rel="manifest" href="manifest.webmanifest" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<header class="hero">
+  <div class="hero-brand">威敏斯仪器</div>
+  <h1 id="appTitle">威敏斯客户采集系统</h1>
+  <p id="appSubtitle">现场登记 · 约 40 秒填完</p>
+</header>
+
+<main>
+  <!-- 表单 -->
+  <section id="view-form" class="card">
+    <form id="surveyForm" novalidate autocomplete="on">
+      <div class="field">
+        <label for="unitName" id="unitNameLabel">单位名称 <span class="req">*</span></label>
+        <input id="unitName" name="unitName" type="text" autocomplete="organization" enterkeyhint="next" />
+        <p class="hint" id="unitNameHint"></p>
+      </div>
+
+      <div class="field">
+        <label for="visitorName" id="visitorNameLabel">姓名 <span class="req">*</span></label>
+        <input id="visitorName" name="visitorName" type="text" autocomplete="name" enterkeyhint="next" />
+      </div>
+
+      <div class="field">
+        <label for="phone" id="phoneLabel">手机号 <span class="req">*</span></label>
+        <input id="phone" name="phone" type="tel" inputmode="numeric" autocomplete="tel" enterkeyhint="next" />
+        <p class="hint" id="phoneHint"></p>
+      </div>
+
+      <div class="field">
+        <label for="email" id="emailLabel">邮箱</label>
+        <input id="email" name="email" type="email" inputmode="email" autocomplete="email" enterkeyhint="next" />
+        <p class="hint" id="emailHint"></p>
+      </div>
+
+      <div class="field">
+        <label id="researchLabel">研究方向 <span class="req">*</span></label>
+        <div class="chips" id="researchChips"></div>
+        <div class="custom-box" id="researchCustomBox" hidden>
+          <input id="researchCustom" type="text" enterkeyhint="next" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label id="workLabel">工作方向 <span class="req">*</span></label>
+        <div class="chips" id="workChips"></div>
+        <div class="custom-box" id="workCustomBox" hidden>
+          <input id="workCustom" type="text" enterkeyhint="next" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="expectation" id="expectationLabel">对产品期待</label>
+        <textarea id="expectation" rows="3" maxlength="300" enterkeyhint="done"></textarea>
+        <p class="hint" id="expectationHint"></p>
+      </div>
+
+      <p class="error" id="formError" hidden></p>
+
+      <button class="btn-primary" id="submitBtn" type="submit">提交</button>
+      <p class="privacy" id="privacyNote">信息仅用于会后技术交流，不上传第三方平台。</p>
+    </form>
+  </section>
+
+  <!-- 成功 -->
+  <section id="view-done" class="card center" hidden>
+    <div class="tick">✓</div>
+    <h2>提交成功</h2>
+    <p class="muted" id="doneNote">感谢登记，我们会尽快与您联系。</p>
+    <button class="btn-ghost" id="againBtn" type="button">再填一份</button>
+  </section>
+
+  <!-- 暂存待发 -->
+  <section id="view-queued" class="card center" hidden>
+    <div class="tick warn">!</div>
+    <h2>已暂存在本机</h2>
+    <p class="muted" id="queuedNote">当前网络不通，联网后会自动提交，请保持本页不要关闭。</p>
+    <button class="btn-ghost" id="retryBtn" type="button">立即重试</button>
+  </section>
+
+  <!-- 未配置 -->
+  <section id="view-unconfigured" class="card center" hidden>
+    <h2>页面尚未启用</h2>
+    <p class="muted">请联系现场工作人员。</p>
+  </section>
+</main>
+
+<footer class="foot">
+  <span id="footBrand">威敏斯仪器 · 稀土材料检测</span>
+</footer>
+
+<script src="config.js"></script>
+<script src="crypto-client.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

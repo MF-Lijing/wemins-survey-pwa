@@ -1,0 +1,272 @@
+{
+  "_readme": "威敏斯客户采集系统 v1.1 唯一规则源。Android / iOS(PWA) / Excel 三端必须读取本文件，禁止在代码中硬编码任何权重、关键词、阈值。修改后请同步副本：android/app/src/main/assets/rules.json、android/app/src/test/resources/rules.json、ios-pwa/rules.json、excel/rules.json，并运行 python tests/check_sync.py 校验。",
+
+  "app": {
+    "name": "威敏斯客户采集系统",
+    "shortName": "威敏斯调研",
+    "version": "1.1.1",
+    "company": "威敏斯仪器设备有限公司",
+    "partner": "安科惠生",
+    "event": "中国稀土学会 2026 学术年会（苏州）",
+    "subtitle": "现场访客信息采集 · 意向分级 · 潜在客户排序",
+    "description": "展会现场由威敏斯采集人逐位记录访客信息，保存即评分，按综合优先级与排序分值识别潜在客户。数据只保存在本机，按采集人分别导出 CSV。"
+  },
+
+  "collectors": ["张明", "李红", "王强", "陈静", "赵磊"],
+  "collectorCodes": {
+    "张明": "zhangming",
+    "李红": "lihong",
+    "王强": "wangqiang",
+    "陈静": "chenjing",
+    "赵磊": "zhaolei"
+  },
+  "collector": {
+    "allowCustom": true,
+    "defaultName": "张明",
+    "label": "采集人",
+    "hint": "首次使用请选择你的姓名；一台设备多人共用时，点顶部姓名可切换。切换后录入的记录归当前采集人所有，历史记录不随切换改变。",
+    "switchTitle": "切换采集人",
+    "nameLabel": "姓名",
+    "namePlaceholder": "例如：张明",
+    "phoneLabel": "手机号",
+    "phoneRequired": true,
+    "phonePlaceholder": "11 位手机号",
+    "phonePattern": "^1[3-9]\\d{9}$",
+    "phoneHint": "必填，仅保存在本机，仅供会后内部联系确认",
+    "emailLabel": "邮箱",
+    "emailRequired": false,
+    "emailPattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$",
+    "emailPlaceholder": "选填",
+    "emailHint": "选填，方便会后向你发送跟进资料"
+  },
+
+  "fields": {
+    "unitName": {
+      "label": "单位名称",
+      "required": true,
+      "placeholder": "例如：中科三环 / 包头稀土研究院",
+      "maxLength": 60
+    },
+    "visitorName": {
+      "label": "姓名",
+      "required": true,
+      "placeholder": "访客本人姓名",
+      "maxLength": 30
+    },
+    "phone": {
+      "label": "手机号",
+      "required": true,
+      "placeholder": "11 位手机号",
+      "maxLength": 20,
+      "validationPattern": "^1[3-9]\\d{9}$",
+      "validationHint": "仅做格式提示，不联网校验"
+    },
+    "email": {
+      "label": "邮箱",
+      "required": false,
+      "placeholder": "选填，留了邮箱更容易会后跟进",
+      "maxLength": 80
+    },
+    "researchDirection": {
+      "label": "研究方向",
+      "required": true,
+      "customValue": "自定义",
+      "options": ["稀土成分", "永磁体", "自定义"],
+      "customLabel": "具体研究方向",
+      "customPlaceholder": "例如：钕铁硼晶界扩散 / 钐钴磁体",
+      "voiceHint": "点麦克风说，或直接键盘输入"
+    },
+    "workDirection": {
+      "label": "工作方向",
+      "required": true,
+      "customValue": "自定义",
+      "options": ["无机元素分析", "使用XRF", "自定义"],
+      "customLabel": "具体工作方向",
+      "customPlaceholder": "例如：XRF 镀层测厚 / 荧光光谱",
+      "voiceHint": "点麦克风说，或直接键盘输入"
+    },
+    "expectation": {
+      "label": "对产品期待",
+      "required": false,
+      "placeholder": "原话记录访客最关心什么：价格？交期？现场演示？替换现有设备？",
+      "hint": "这是判断意向度最关键的一条，请尽量记录访客原话，不要自己归纳。",
+      "maxLength": 300
+    }
+  },
+
+  "voice": {
+    "language": "zh-CN",
+    "prompt": "请说出内容",
+    "unavailableHint": "本机语音识别不可用，请改用键盘输入"
+  },
+
+  "fit": {
+    "fitMax": 80,
+    "researchDirection": {
+      "weights": {
+        "稀土成分": 30,
+        "永磁体": 40
+      },
+      "customKeywordHits": {
+        "钕铁硼": 40,
+        "钐钴": 35,
+        "稀土": 25
+      },
+      "customRule": "自定义方向按关键词命中计分，多个关键词命中时只取最高分值，不累加"
+    },
+    "workDirection": {
+      "weights": {
+        "无机元素分析": 30,
+        "使用XRF": 35
+      },
+      "customKeywordHits": {
+        "XRF": 35,
+        "荧光": 30,
+        "元素分析": 25
+      },
+      "customRule": "自定义方向按关键词命中计分，多个关键词命中时只取最高分值，不累加"
+    },
+    "tiers": [
+      { "tier": "高", "min": 60 },
+      { "tier": "中", "min": 35 },
+      { "tier": "低", "min": 0 }
+    ]
+  },
+
+  "intent": {
+    "intentCap": 60,
+    "expectationCap": 50,
+    "expectationSignals": [
+      { "word": "采购", "points": 40 },
+      { "word": "试用", "points": 30 },
+      { "word": "现场演示", "points": 30 },
+      { "word": "预算", "points": 30 },
+      { "word": "方案", "points": 25 },
+      { "word": "价格", "points": 20 },
+      { "word": "交期", "points": 20 },
+      { "word": "替换", "points": 20 },
+      { "word": "对比", "points": 15 }
+    ],
+    "emailPoints": 10,
+    "emailEvidence": "已留邮箱",
+    "tiers": [
+      { "tier": "高", "min": 40 },
+      { "tier": "中", "min": 20 },
+      { "tier": "低", "min": 0 }
+    ],
+    "invalidPhone": {
+      "enabled": true,
+      "forceIntentTier": "低",
+      "forceMaxPriority": "C",
+      "evidence": "手机号缺失或格式异常，已降级"
+    },
+    "note": "意向度只用表单字段判断，不使用停留时长、扫描次数等行为数据"
+  },
+
+  "priority": {
+    "matrix": {
+      "高|高": "A",
+      "高|中": "B",
+      "高|低": "B",
+      "中|高": "B",
+      "中|中": "C",
+      "中|低": "C",
+      "低|高": "C",
+      "低|中": "C",
+      "低|低": "C"
+    },
+    "labels": {
+      "A": "A 优先跟进",
+      "B": "B 会后培育",
+      "C": "C 观察"
+    },
+    "order": ["A", "B", "C"],
+    "followUpAdvice": {
+      "A": "当天联系：24 小时内电话/微信确认需求细节，约定样机演示或寄样时间。",
+      "B": "48 小时内个性化跟进：按研究方向发对应应用案例（稀土成分分析 / 永磁体检测 / XRF 现场筛查）。",
+      "C": "进入培育池：会后统一发送资料，季度回访一次，不占用现场跟进人力。"
+    }
+  },
+
+  "rank": {
+    "fitWeight": 55,
+    "intentWeight": 45,
+    "roundTo": 1,
+    "min": 0,
+    "max": 100,
+    "note": "排序分值仅供同一综合优先级内部排序，不是成交概率，不得对外展示或用作考核依据"
+  },
+
+  "csv": {
+    "columns": [
+      "采集人",
+      "单位名称",
+      "姓名",
+      "手机号",
+      "邮箱",
+      "研究方向",
+      "工作方向",
+      "对产品期待",
+      "匹配度分档",
+      "意向度分档",
+      "综合优先级",
+      "排序分值",
+      "评分依据",
+      "录入时间"
+    ],
+    "evidenceSeparator": "|",
+    "customPrefix": "自定义:",
+    "filenamePattern": "WMS_{collector}_{timestamp}.csv",
+    "timestampPattern": "yyyyMMdd-HHmm",
+    "unknownCollectorPrefix": "u",
+    "createdAtPattern": "yyyy-MM-dd HH:mm:ss",
+    "encoding": "UTF-8",
+    "bom": true,
+    "newline": "\r\n",
+    "quoteAll": false
+  },
+
+  "excel": {
+    "outputName": "威敏斯客户调研汇总排序.xlsx",
+    "sheets": {
+      "summary": "汇总排序",
+      "input": "问卷录入",
+      "info": "说明",
+      "stats": "分档统计"
+    },
+    "colors": {
+      "header": "2F5597",
+      "aFill": "FDE2E1",
+      "bFill": "FFF2CC",
+      "cFill": "FFFFFF",
+      "brand": "1F4E5F",
+      "note": "8EA9DB"
+    }
+  },
+
+  "infoPage": {
+    "usageSteps": [
+      "1. 首次打开选择自己的姓名（采集人），点顶部姓名可随时切换。",
+      "2. 每接待一位访客填一份：单位、姓名、手机号必填，邮箱选填。",
+      "3. 研究方向 / 工作方向先选大类，选「自定义」后展开输入框，可用麦克风说。",
+      "4.「对产品期待」尽量记访客原话，这是意向度评分的主要依据。",
+      "5. 点「保存并评分」→ 立即看到匹配度、意向度、综合优先级和评分依据。",
+      "6. 收工后进「本机记录」→「导出我的 CSV」，通过微信/邮件发回公司汇总。"
+    ],
+    "fieldNotes": [
+      { "field": "研究方向", "note": "访客自己说的专业方向，决定匹配度。稀土成分、永磁体为高匹配方向。" },
+      { "field": "工作方向", "note": "访客实际做的检测工作。使用 XRF、无机元素分析与我方产品直接对口。" },
+      { "field": "对产品期待", "note": "出现采购、试用、现场演示、预算、价格、交期、替换、对比等字眼会提高意向度。" },
+      { "field": "邮箱", "note": "留邮箱视为弱意向信号，可加分；同时是会后发送资料的通道。" },
+      { "field": "手机号", "note": "必填。格式异常（非 11 位大陆手机号）会自动降级为 C，避免无效线索进入优先名单。" }
+    ],
+    "dataOwnership": [
+      "所有数据只保存在本机，不上传、不联网，App 未申请网络权限。",
+      "记录归属于录入时的采集人；换人使用不会改动他人记录。",
+      "导出 CSV 为 UTF-8 BOM 编码，Excel 直接打开不乱码。",
+      "删除记录会立即从本机移除，请确认后再删。"
+    ],
+    "scoringIntro": "评分规则全部来自 rules.json，本页数字实时读取，不写死在代码里。",
+    "followUpIntro": "会后跟进建议（按综合优先级）："
+  }
+}
