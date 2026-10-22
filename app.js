@@ -1,5 +1,5 @@
-/**
- * 威敏斯客户调研 · iPhone / PWA 应用逻辑
+﻿/**
+ * 威敏斯客户采集系统 · iPhone / PWA 应用逻辑
  *
  * 依赖：engine.js（纯评分引擎）、rules.json（唯一规则源）
  * 存储：localStorage（本机，不上传）；评分在保存时计算并持久化，读取不重算。
@@ -13,6 +13,8 @@
   var RULES = null;
   var state = {
     collector: "",
+    collectorPhone: "",
+    collectorEmail: "",
     researchType: "",
     workType: "",
     records: [],
@@ -81,16 +83,36 @@
   }
 
   // ------------------------------------------------------------ 规则渲染
-  function hydrateText() {
+  function appNameText() {
     var app = RULES.app || {};
-    $("appName").textContent = app.name || "威敏斯客户调研";
+    return (app.name || "威敏斯客户采集系统") + (app.version ? " v" + app.version : "");
+  }
+
+  function hydrateText() {
+    var title = appNameText();
+    var app = RULES.app || {};
+    $("appName").textContent = title;
     $("appSubtitle").textContent = [app.event, app.subtitle].filter(Boolean).join(" · ");
-    document.title = app.name || "威敏斯客户调研";
+    document.title = title;
 
     var collectorCfg = RULES.collector || {};
     document.querySelector(".collector-chip-label").textContent = collectorCfg.label || "采集人";
     $("sheetTitle").textContent = collectorCfg.switchTitle || "切换采集人";
     $("sheetHint").textContent = collectorCfg.hint || "";
+
+    var phoneRequired = collectorCfg.phoneRequired !== false;
+    var emailRequired = !!collectorCfg.emailRequired;
+    $("collectorNameLabel").innerHTML =
+      esc(collectorCfg.nameLabel || "姓名") + '<span class="req">*</span>';
+    $("collectorPhoneLabel").innerHTML =
+      esc(collectorCfg.phoneLabel || "手机号") + (phoneRequired ? '<span class="req">*</span>' : "");
+    $("collectorEmailLabel").innerHTML =
+      esc(collectorCfg.emailLabel || "邮箱") + (emailRequired ? '<span class="req">*</span>' : "");
+    $("collectorCustom").placeholder = collectorCfg.namePlaceholder || "输入姓名";
+    $("collectorPhone").placeholder = collectorCfg.phonePlaceholder || "11 位手机号";
+    $("collectorEmail").placeholder = collectorCfg.emailPlaceholder || "选填";
+    $("collectorPhoneHint").textContent = collectorCfg.phoneHint || "";
+    $("collectorEmailHint").textContent = collectorCfg.emailHint || "";
 
     var fields = RULES.fields || {};
 
@@ -144,8 +166,6 @@
       (fields.researchDirection && fields.researchDirection.customPlaceholder) || "";
     $("workCustom").placeholder =
       (fields.workDirection && fields.workDirection.customPlaceholder) || "";
-    $("collectorCustom").placeholder =
-      (RULES.collector && RULES.collector.customPlaceholder) || "输入姓名";
   }
 
   function updateExpectationCounter() {
@@ -187,10 +207,25 @@
   }
 
   // --------------------------------------------------------------- 采集人
-  function applyCollector(name) {
-    state.collector = name;
-    $("collectorName").textContent = name || "未选择";
-    if (name) writeJSON(STORE_COLLECTOR, name);
+  function normalizeProfile(value) {
+    var profile = typeof value === "string"
+      ? { name: value, phone: "", email: "" }
+      : (value && typeof value === "object" ? value : null);
+    if (!profile) return null;
+    return {
+      name: String(profile.name || "").trim(),
+      phone: String(profile.phone || "").trim(),
+      email: String(profile.email || "").trim()
+    };
+  }
+
+  function applyCollector(profileOrName) {
+    var profile = normalizeProfile(profileOrName) || { name: "", phone: "", email: "" };
+    state.collector = profile.name;
+    state.collectorPhone = profile.phone;
+    state.collectorEmail = profile.email;
+    $("collectorName").textContent = profile.name || "未选择";
+    if (profile.name) writeJSON(STORE_COLLECTOR, profile);
     renderHistory();
   }
 
@@ -198,14 +233,11 @@
     state.sheetPick = state.collector || (RULES.collector && RULES.collector.defaultName) || "";
     $("sheetBackdrop").hidden = false;
     renderCollectorChips();
-    var customBox = $("collectorCustomBox");
     var customAllowed = !!(RULES.collector && RULES.collector.allowCustom !== false);
     $("collectorCustom").value = customAllowed ? state.sheetPick : "";
-    customBox.hidden = !customAllowed;
-    if (customAllowed) {
-      $("collectorCustom").hidden = false;
-      $("collectorCustom").value = state.sheetPick;
-    }
+    $("collectorCustomBox").hidden = !customAllowed;
+    $("collectorPhone").value = state.collectorPhone || "";
+    $("collectorEmail").value = state.collectorEmail || "";
   }
 
   function renderCollectorChips() {
@@ -219,8 +251,8 @@
       button.dataset.value = name;
       button.addEventListener("click", function () {
         state.sheetPick = name;
-        renderCollectorChips();
         $("collectorCustom").value = "";
+        renderCollectorChips();
       });
       box.appendChild(button);
     });
@@ -229,14 +261,57 @@
     }
   }
 
+  function collectorRegExp(key) {
+    var pattern = (RULES.collector || {})[key];
+    if (!pattern) return null;
+    try {
+      return new RegExp(pattern);
+    } catch (err) {
+      return null;
+    }
+  }
+
   function confirmCollector() {
+    var cfg = RULES.collector || {};
     var custom = ($("collectorCustom").value || "").trim();
     var chosen = custom || state.sheetPick;
     if (!chosen) {
       toast("请选择或输入采集人姓名", true);
       return;
     }
-    applyCollector(chosen);
+
+    var phoneRequired = cfg.phoneRequired !== false;
+    var phone = ($("collectorPhone").value || "").trim();
+    if (phoneRequired && !phone) {
+      toast("请输入采集人手机号", true);
+      $("collectorPhone").focus();
+      return;
+    }
+    var phonePattern = collectorRegExp("phonePattern");
+    if (phone && phonePattern && !phonePattern.test(phone)) {
+      toast("请输入正确的手机号", true);
+      $("collectorPhone").focus();
+      return;
+    }
+
+    var emailRequired = !!cfg.emailRequired;
+    var email = ($("collectorEmail").value || "").trim();
+    if (emailRequired && !email) {
+      toast("请输入" + (cfg.emailLabel || "邮箱"), true);
+      $("collectorEmail").focus();
+      return;
+    }
+    var emailPattern = collectorRegExp("emailPattern");
+    if (email && emailPattern && !emailPattern.test(email)) {
+      toast("邮箱格式不正确", true);
+      $("collectorEmail").focus();
+      return;
+    }
+
+    applyCollector({ name: chosen, phone: phone, email: email });
+    ["collectorCustom", "collectorPhone", "collectorEmail"].forEach(function (id) {
+      $(id).blur();
+    });
     $("sheetBackdrop").hidden = true;
     toast("当前采集人：" + chosen);
   }
@@ -746,11 +821,16 @@
         setupVoice();
         renderInfo();
 
-        var saved = readJSON(STORE_COLLECTOR, "");
-        if (saved) {
-          applyCollector(saved);
+        var savedProfile = readJSON(STORE_COLLECTOR, null);
+        var savedProfileNorm = normalizeProfile(savedProfile);
+        if (savedProfileNorm && savedProfileNorm.name) {
+          applyCollector(savedProfileNorm);
         } else {
-          applyCollector((RULES.collector && RULES.collector.defaultName) || "");
+          applyCollector({
+            name: (RULES.collector && RULES.collector.defaultName) || "",
+            phone: "",
+            email: ""
+          });
         }
         updateBadge();
 
@@ -765,6 +845,18 @@
           $("sheetBackdrop").hidden = true;
         });
         $("sheetConfirm").addEventListener("click", confirmCollector);
+        [["collectorCustom", "collectorPhone"], ["collectorPhone", "collectorEmail"], ["collectorEmail", null]]
+          .forEach(function (pair) {
+            $(pair[0]).addEventListener("keydown", function (event) {
+              if (event.key !== "Enter") return;
+              event.preventDefault();
+              if (pair[1]) {
+                $(pair[1]).focus();
+              } else {
+                confirmCollector();
+              }
+            });
+          });
         $("sheetBackdrop").addEventListener("click", function (event) {
           if (event.target === $("sheetBackdrop")) $("sheetBackdrop").hidden = true;
         });
@@ -795,7 +887,7 @@
         switchView("form");
 
         // 首次进入：让采集人先确认自己是谁（不能用 applyCollector 写入后的值判断）
-        if (!saved) {
+        if (!(savedProfileNorm && savedProfileNorm.name)) {
           openCollectorSheet();
         }
 

@@ -1,10 +1,10 @@
-/* 威敏斯客户调研 · Service Worker
+/* 威敏斯客户采集系统 · Service Worker
  * 目标：装到手机主屏后完全离线可用（会场 WiFi 不可靠）。
  * 策略：安装时预缓存全部静态资源；请求走 cache-first，miss 时回源并写入缓存。
  */
 "use strict";
 
-var CACHE = "wemins-survey-v1.0.0";
+var CACHE = "wemins-survey-v1.1.0";
 var ASSETS = [
   "./",
   "index.html",

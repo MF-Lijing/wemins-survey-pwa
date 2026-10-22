@@ -1,4 +1,8 @@
-/* 威敏斯客户调研 · iPhone/PWA 样式 */
+/* 威敏斯客户采集系统 · iPhone/PWA 样式 */
+
+/* hidden 属性必须真正隐藏：防止组件级 display 规则（如 .sheet-backdrop 的 flex）覆盖它，
+   否则「切换采集人」弹层会一直悬浮在页面上，取消/确定点了也没反应 */
+[hidden] { display: none !important; }
 
 :root {
   --brand: #1F4E5F;
@@ -646,6 +650,29 @@ textarea { resize: vertical; min-height: 96px; line-height: 1.55; }
 .sheet-actions { display: flex; gap: 10px; margin-top: 18px; }
 .sheet-actions .btn { flex: 1; }
 
+/* 采集人资料表单（姓名 / 手机号 / 邮箱） */
+.collector-profile { margin-top: 14px; }
+
+.collector-profile .sheet-field,
+.collector-profile .custom-box {
+  margin-top: 0;
+  margin-bottom: 13px;
+}
+
+.collector-profile > :last-child { margin-bottom: 0; }
+
+.collector-profile > label,
+.sheet-field > label {
+  display: block;
+  margin-bottom: 7px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-2);
+  letter-spacing: .2px;
+}
+
+.sheet-field .field-hint { margin-top: 6px; }
+
 /* ---------------- Toast ---------------- */
 .toast {
   position: fixed;
@@ -672,4 +699,20 @@ textarea { resize: vertical; min-height: 96px; line-height: 1.55; }
   .content { padding: 12px; }
   .card { padding: 13px; }
   .metric-value { font-size: 18px; }
+}
+
+/* ---------------- 桌面/悬停微交互（对触屏无副作用） ---------------- */
+@media (hover: hover) {
+  .chip:hover { border-color: var(--accent); color: var(--accent); }
+  .chip.is-selected:hover { color: var(--accent); }
+  .record:hover { border-color: rgba(47, 85, 151, .35); box-shadow: 0 10px 28px rgba(16, 32, 44, .1); }
+  .btn-primary:hover { filter: brightness(1.06); }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+  .collector-chip:hover { background: rgba(255, 255, 255, .22); }
+}
+
+/* 大屏（iPad/桌面）留白更舒展 */
+@media (min-width: 620px) {
+  .content { padding: 24px 16px; }
+  .card { margin-bottom: 16px; }
 }

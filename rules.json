@@ -1,10 +1,10 @@
 {
-  "_readme": "威敏斯客户调研系统 v1.0 唯一规则源。Android / iOS(PWA) / Excel 三端必须读取本文件，禁止在代码中硬编码任何权重、关键词、阈值。修改后请同步副本：android/app/src/main/assets/rules.json、android/app/src/test/resources/rules.json、ios-pwa/rules.json、excel/rules.json，并运行 python tests/check_sync.py 校验。",
+  "_readme": "威敏斯客户采集系统 v1.1 唯一规则源。Android / iOS(PWA) / Excel 三端必须读取本文件，禁止在代码中硬编码任何权重、关键词、阈值。修改后请同步副本：android/app/src/main/assets/rules.json、android/app/src/test/resources/rules.json、ios-pwa/rules.json、excel/rules.json，并运行 python tests/check_sync.py 校验。",
 
   "app": {
-    "name": "威敏斯客户调研",
+    "name": "威敏斯客户采集系统",
     "shortName": "威敏斯调研",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "company": "威敏斯仪器设备有限公司",
     "partner": "安科惠生",
     "event": "中国稀土学会 2026 学术年会（苏州）",
@@ -25,7 +25,19 @@
     "defaultName": "张明",
     "label": "采集人",
     "hint": "首次使用请选择你的姓名；一台设备多人共用时，点顶部姓名可切换。切换后录入的记录归当前采集人所有，历史记录不随切换改变。",
-    "switchTitle": "切换采集人"
+    "switchTitle": "切换采集人",
+    "nameLabel": "姓名",
+    "namePlaceholder": "例如：张明",
+    "phoneLabel": "手机号",
+    "phoneRequired": true,
+    "phonePlaceholder": "11 位手机号",
+    "phonePattern": "^1[3-9]\\d{9}$",
+    "phoneHint": "必填，仅保存在本机，仅供会后内部联系确认",
+    "emailLabel": "邮箱",
+    "emailRequired": false,
+    "emailPattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$",
+    "emailPlaceholder": "选填",
+    "emailHint": "选填，方便会后向你发送跟进资料"
   },
 
   "fields": {

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>威敏斯客户调研</title>
+  <title>威敏斯客户采集系统</title>
 
   <meta name="theme-color" content="#2F5597" />
   <meta name="description" content="威敏斯仪器设备有限公司 · 中国稀土学会 2026 学术年会现场访客信息采集与意向分级" />
@@ -22,7 +22,7 @@
   <div class="app">
     <header class="topbar">
       <div class="topbar-text">
-        <h1 id="appName">威敏斯客户调研</h1>
+        <h1 id="appName">威敏斯客户采集系统</h1>
         <p id="appSubtitle"></p>
       </div>
       <button id="collectorBtn" class="collector-chip" type="button" aria-haspopup="dialog">
@@ -137,8 +137,21 @@
       <h2 id="sheetTitle">切换采集人</h2>
       <p class="sheet-hint" id="sheetHint"></p>
       <div class="chips chips-wrap" id="collectorChips"></div>
-      <div class="custom-box" id="collectorCustomBox" hidden>
-        <input id="collectorCustom" type="text" placeholder="输入姓名" />
+      <div class="collector-profile">
+        <div class="custom-box sheet-field" id="collectorCustomBox" hidden>
+          <label for="collectorCustom" id="collectorNameLabel">姓名</label>
+          <input id="collectorCustom" type="text" placeholder="输入姓名" enterkeyhint="next" autocomplete="off" />
+        </div>
+        <div class="sheet-field">
+          <label for="collectorPhone" id="collectorPhoneLabel">手机号<span class="req" id="collectorPhoneReq">*</span></label>
+          <input id="collectorPhone" type="tel" inputmode="numeric" placeholder="11 位手机号" enterkeyhint="next" autocomplete="off" />
+          <p class="field-hint" id="collectorPhoneHint"></p>
+        </div>
+        <div class="sheet-field">
+          <label for="collectorEmail" id="collectorEmailLabel">邮箱</label>
+          <input id="collectorEmail" type="email" inputmode="email" placeholder="选填" enterkeyhint="done" autocomplete="off" />
+          <p class="field-hint" id="collectorEmailHint"></p>
+        </div>
       </div>
       <div class="sheet-actions">
         <button class="btn btn-ghost" type="button" id="sheetCancel">取消</button>
